@@ -11,6 +11,7 @@ class Blockchain:
         self.authorized_devices = {"ESP32-001", "ARDUINO-002"}  
         self.new_block(previous_hash='1', proof=100)  
 
+    #creates a blockchain ledger with  blocks where each block has the address of prev block
     def new_block(self, proof, previous_hash=None):
         block = {
             'index': len(self.chain) + 1,
@@ -22,7 +23,8 @@ class Blockchain:
         self.current_transactions = []
         self.chain.append(block)
         return block
-    
+
+    #create a new transaction block every time we mine
     def new_transaction(self, device_id, status):
         transaction = {
             'device_id': device_id,
@@ -48,7 +50,8 @@ blockchain = Blockchain()
 @app.route('/')
 def home():
     return render_template('index.html')
-
+    
+#to register device 
 @app.route('/register_device', methods=['POST'])
 def register_device():
     values = request.get_json()
@@ -59,7 +62,8 @@ def register_device():
         return jsonify({'message': 'Missing device_id'}), 400
     blockchain.authorized_devices.add(device_id)
     return jsonify({'message': f'Device {device_id} registered successfully'}), 201
-
+    
+#to verify the device if its present in  the blockchain ledger or not
 @app.route('/verify_device', methods=['POST'])
 def verify_device():
     values = request.get_json()
@@ -82,5 +86,6 @@ def get_transactions():
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8080, debug=True)  
+
 
 
